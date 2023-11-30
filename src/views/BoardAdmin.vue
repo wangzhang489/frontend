@@ -28,6 +28,7 @@
           <v-data-table
               :headers="headers"
               :items="books"
+              hide-default-footer
           >
             <template v-slot:[`item.actions`]="{ item }">
               <v-icon small class="mr-2" @click="editBook(item.id)">mdi-pencil</v-icon>
@@ -36,6 +37,16 @@
           </v-data-table>
         </v-card>
       </v-col>
+    <div class="col-md-12">
+      <b-pagination
+          v-model="page"
+          :total-rows="count"
+          :per-page="pageSize"
+          prev-text="Prev"
+          next-text="Next"
+          @change="handlePageChange"
+      ></b-pagination>
+    </div>
 <!--    </v-row>-->
   </div>
 </template>
@@ -58,20 +69,15 @@ export default {
         { text: "Author", value: "author", sortable: false },
         { text: "Actions", value: "actions", sortable: false },
       ],
+      totalPages: 0,
+      currentPage: 1,
+      page: 1,
+      count: 0,
+      pageSize: 25,
+      pageSizes: [3, 6, 9],
     };
   },
   methods: {
-    // retrieveBooks() {
-    //   BookDataService.getAll()
-    //       .then((response) => {
-    //         // this.books = response.data.map(this.getDisplayBook);
-    //         this.books = response.data.books;
-    //         console.log(response.data);
-    //       })
-    //       .catch((e) => {
-    //         console.log(e);
-    //       });
-    // },
     getRequestParams(searchTitle, page, pageSize) {
       let params = {};
 
@@ -116,18 +122,15 @@ export default {
             console.log(e);
           });
     },
-
-    // searchTitle() {
-    //   BookDataService.findByTitle(this.title)
-    //       .then((response) => {
-    //         // this.books = response.data.map(this.getDisplayBook);
-    //         console.log(response.data);
-    //       })
-    //       .catch((e) => {
-    //         console.log(e);
-    //       });
-    // },
-
+    handlePageSizeChange(event) {
+      this.pageSize = event.target.value;
+      this.page = 1;
+      this.retrieveBooks();
+    },
+    handlePageChange(value) {
+      this.page = value;
+      this.retrieveBooks();
+    },
     editBook(id) {
       this.$router.push({ name: "book-details", params: { id: id } });
     },
