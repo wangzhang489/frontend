@@ -19,7 +19,7 @@
         ></v-text-field>
       </v-form>
 
-      <v-btn color="primary" class="mt-3" @click="saveTutorial">Submit</v-btn>
+      <v-btn color="danger" class="mt-3" @click="saveTutorial">Submit</v-btn>
     </div>
 
     <div v-else>
