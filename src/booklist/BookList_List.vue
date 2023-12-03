@@ -1,3 +1,4 @@
+<script src="../models/user.js"></script>
 <template>
   <v-row align="center" class="list px-3 mx-auto">
     <v-col cols="12" md="8">
@@ -12,22 +13,22 @@
 
     <v-col cols="12" sm="12">
       <v-card class="mx-auto" tile>
-        <v-card-title>Tutorials</v-card-title>
+        <v-card-title>Books</v-card-title>
 
         <v-data-table
           :headers="headers"
-          :items="tutorials"
+          :items="books"
           disable-pagination
           :hide-default-footer="true"
         >
           <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="editTutorial(item.id)">mdi-pencil</v-icon>
-            <v-icon small @click="deleteTutorial(item.id)">mdi-delete</v-icon>
+            <v-icon small class="mr-2" @click="editBook(item.id)">mdi-pencil</v-icon>
+            <v-icon small @click="deleteBook(item.id)">mdi-delete</v-icon>
           </template>
         </v-data-table>
 
-        <v-card-actions v-if="tutorials.length > 0">
-          <v-btn small color="error" @click="removeAllTutorials">
+        <v-card-actions v-if="books.length > 0">
+          <v-btn small color="danger" @click="removeAllBooks">
             Remove All
           </v-btn>
         </v-card-actions>
@@ -37,26 +38,28 @@
 </template>
 
 <script>
-import TutorialDataService from "../services/TutorialDataService";
+import BookDataService from "../services/BookDataService";
 export default {
-  name: "tutorials-list",
+  name: "books-list",
   data() {
     return {
-      tutorials: [],
+      books: [],
       title: "",
       headers: [
+        { text: "ID", sortable: false, value: "id" },
         { text: "Title", align: "start", sortable: false, value: "title" },
-        { text: "Description", value: "description", sortable: false },
+        { text: "Author", value: "author", sortable: false },
         { text: "Status", value: "status", sortable: false },
         { text: "Actions", value: "actions", sortable: false },
       ],
     };
   },
   methods: {
-    retrieveTutorials() {
-      TutorialDataService.getAll()
+    retrieveBooks(page =0, size =10) {
+      BookDataService.getAll()
         .then((response) => {
-          this.tutorials = response.data.map(this.getDisplayTutorial);
+          // this.books = response.data.map(this.getDisplayBook);
+          this.books = response.data.books;
           console.log(response.data);
         })
         .catch((e) => {
@@ -65,24 +68,14 @@ export default {
     },
 
     refreshList() {
-      this.retrieveTutorials();
+      this.retrieveBooks();
     },
 
-    removeAllTutorials() {
-      TutorialDataService.deleteAll()
-        .then((response) => {
-          console.log(response.data);
-          this.refreshList();
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
 
     searchTitle() {
-      TutorialDataService.findByTitle(this.title)
+      BookDataService.findByTitle(this.title)
         .then((response) => {
-          this.tutorials = response.data.map(this.getDisplayTutorial);
+          this.books = response.data.map(this.getDisplayBook);
           console.log(response.data);
         })
         .catch((e) => {
@@ -90,12 +83,12 @@ export default {
         });
     },
 
-    editTutorial(id) {
-      this.$router.push({ name: "tutorial-details", params: { id: id } });
+    editBook(id) {
+      this.$router.push({ name: "book-details", params: { id: id } });
     },
 
-    deleteTutorial(id) {
-      TutorialDataService.delete(id)
+    deleteBook(id) {
+      BookDataService.delete(id)
         .then(() => {
           this.refreshList();
         })
@@ -104,17 +97,17 @@ export default {
         });
     },
 
-    getDisplayTutorial(tutorial) {
+    getDisplayBook(book) {
       return {
-        id: tutorial.id,
-        title: tutorial.title.length > 30 ? tutorial.title.substr(0, 30) + "..." : tutorial.title,
-        description: tutorial.description.length > 30 ? tutorial.description.substr(0, 30) + "..." : tutorial.description,
-        status: tutorial.published ? "Published" : "Pending",
+        id: book.id,
+        title: book.title.length > 30 ? book.title.substr(0, 30) + "..." : book.title,
+        description: book.description.length > 30 ? book.description.substr(0, 30) + "..." : book.description,
+        status: book.published ? "Published" : "Pending",
       };
     },
   },
   mounted() {
-    this.retrieveTutorials();
+    this.retrieveBooks();
   },
 };
 </script>

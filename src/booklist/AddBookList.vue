@@ -1,25 +1,25 @@
 <template>
   <div class="submit-form mt-3 mx-auto">
-    <p class="headline">Add Tutorial</p>
+    <p class="headline">Add Book</p>
 
     <div v-if="!submitted">
       <v-form ref="form" lazy-validation>
         <v-text-field
-          v-model="tutorial.title"
+          v-model="book.title"
           :rules="[(v) => !!v || 'Title is required']"
           label="Title"
           required
         ></v-text-field>
 
         <v-text-field
-          v-model="tutorial.description"
+          v-model="book.auther"
           :rules="[(v) => !!v || 'Description is required']"
           label="Description"
           required
         ></v-text-field>
       </v-form>
 
-      <v-btn color="danger" class="mt-3" @click="saveTutorial">Submit</v-btn>
+      <v-btn color="danger" class="mt-3" @click="saveBook">Submit</v-btn>
     </div>
 
     <div v-else>
@@ -29,11 +29,11 @@
         </v-card-title>
 
         <v-card-subtitle>
-          Click the button to add new Tutorial.
+          Click the button to add new Book.
         </v-card-subtitle>
 
         <v-card-actions>
-          <v-btn color="success" @click="newTutorial">Add</v-btn>
+          <v-btn color="danger" @click="newBook">Add</v-btn>
         </v-card-actions>
       </v-card>
     </div>
@@ -41,13 +41,13 @@
 </template>
 
 <script>
-import TutorialDataService from "../services/TutorialDataService";
+import BookDataService from "../services/BookDataService";
 
 export default {
-  name: "add-tutorial",
+  name: "add-book",
   data() {
     return {
-      tutorial: {
+      book: {
         id: null,
         title: "",
         description: "",
@@ -57,15 +57,15 @@ export default {
     };
   },
   methods: {
-    saveTutorial() {
+    saveBook() {
       var data = {
-        title: this.tutorial.title,
-        description: this.tutorial.description,
+        title: this.book.title,
+        description: this.book.description,
       };
 
-      TutorialDataService.create(data)
+      BookDataService.create(data)
         .then((response) => {
-          this.tutorial.id = response.data.id;
+          this.book.id = response.data.id;
           console.log(response.data);
           this.submitted = true;
         })
@@ -74,9 +74,9 @@ export default {
         });
     },
 
-    newTutorial() {
+    newBook() {
       this.submitted = false;
-      this.tutorial = {};
+      this.book = {};
     },
   },
 };

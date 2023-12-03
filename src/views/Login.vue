@@ -46,6 +46,15 @@
         <div class="form-group">
           <div v-if="message" class="alert alert-danger" role="alert">{{message}}</div>
         </div>
+        <b-form-group class="text-center">
+          <p>
+            Don't have an account ? You can
+            <router-link to="/signup">create one by Github </router-link>
+          </p>
+          <b-button class="social-button" @click="socialGithubLogin"
+          ><img src="../assets/github_logo.png"
+                width="20"/></b-button>
+        </b-form-group>
       </form>
     </div>
   </div>
@@ -53,14 +62,16 @@
 
 <script>
 import User from '../models/user';
-
 export default {
   name: 'Login',
   data() {
     return {
       user: new User('', ''),
       loading: false,
-      message: ''
+      message: '',
+      email: "",
+      password: "",
+      username: "",
     };
   },
   computed: {
@@ -97,7 +108,7 @@ export default {
           );
         }
       });
-    }
+    },
   }
 };
 </script>

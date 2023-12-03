@@ -9,17 +9,6 @@ Vue.use(Router);
 export default new Router({
     mode: "history",
     routes: [
-        // {
-        //     path: "/",
-        //     alias: "/tutorials",
-        //     name: "tutorials",
-        //     component: () => import("./tutorial/TutorialsList")
-        // },
-        // {
-        //     path: "/tutorials/:id",
-        //     name: "tutorial-details",
-        //     component: () => import("./tutorial/Tutorial")
-        // },
         {
             path: "/",
             alias: '/home',
@@ -40,12 +29,11 @@ export default new Router({
             name: "book-details",
             component: () => import("./book/Book")
         },
-        // {
-        //     path: "/add",
-        //     name: "add",
-        //     component: () => import("./book/AddTutorial")
-        // },
-
+        {
+            path: "/buybooks/:id",
+            name: "buybookpage",
+            component: () => import("./views/Buy.vue")
+        },
         {
             path: '/login',
             component: Login
@@ -66,11 +54,5 @@ export default new Router({
             // lazy-loaded
             component: () => import('./views/BoardAdmin.vue')
         },
-        // {
-        //     path: '/user',
-        //     name: 'user',
-        //     // lazy-loaded
-        //     component: () => import('./views/BoardUser.vue')
-        // },
     ]
 });

@@ -3,16 +3,9 @@
     <v-container>
       <v-row>
         <v-col cols="12">
-          <v-img :src="currentBook.img" alt="Book Cover" contain></v-img>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="12">
           <h2>{{ currentBook.title }}</h2>
           <p><strong>Author:</strong> {{ currentBook.author }}</p>
           <p><strong>Format:</strong> {{ currentBook.bookformat }}</p>
-          <p><strong>ISBN:</strong> {{ currentBook.isbn }}</p>
           <p>
             <strong>Genre:</strong>
             <v-chip v-for="(genre, index) in currentBook.genre.split(',')" :key="index" class="mr-2" outlined>
@@ -23,7 +16,6 @@
           <p><strong>Rating:</strong> {{ currentBook.rating }}</p>
           <p><strong>Reviews:</strong> {{ currentBook.reviews }}</p>
           <p v-if="showAdminBoard"><strong>Status:</strong> {{ currentBook.published ? "Published" : "Pending" }}</p>
-          <p><strong>Description:</strong> {{ currentBook.description }}</p>
         </v-col>
       </v-row>
 
@@ -31,29 +23,10 @@
 
       <v-row>
         <v-col cols="12">
-          <div v-if="showAdminBoard">
-            <v-btn v-if="currentBook.published" @click="updatePublished(false)" color="primary" small class="mr-2">
-              UnPublish
-            </v-btn>
-
-            <v-btn v-else @click="updatePublished(true)" color="danger" small class="mr-2">
-              Publish
-            </v-btn>
-
-            <v-btn color="danger" small class="mr-2" @click="deleteBook">
-              Delete
-            </v-btn>
-            <v-btn color="danger" small @click="updateBook">
-              Update
-            </v-btn>
-          </div>
           <div v-if="currentUser">
-            <!--            <router-link :to="{ name: 'buybookpage', params: { id: currentBook.id } }">-->
-            <v-btn color="danger" small @click="checkower">
-              <!--              <v-btn color="danger" small>-->
-              Buy
+            <v-btn color="danger" small @click="buyBook">
+              Check Out
             </v-btn>
-            <!--            </router-link>-->
           </div>
         </v-col>
       </v-row>
@@ -104,35 +77,24 @@ export default {
             console.log(e);
           });
     },
-
-    updateBook() {
-      BookDataService.update(this.currentBook.id, this.currentBook)
-          .then((response) => {
-            console.log(response.data);
-            this.$router.push({name: "books"});
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    },
-    checkower() {
+    buyBook() {
       var data = {
         userid: this.currentUser.id,
         bookid: this.currentBook.id,
       };
-      BookDataService.checkowner(data)
+      BookDataService.buybook(data)
           .then((response) => {
+            // this.book.id = response.data.id;
             console.log(response.data);
-            if (response.data === 0) {
-              this.$router.push({name: "buybookpage", params: {id: this.currentBook.id}});
-            } else {
-              alert("you already owned this book");
+            if (response.data.status === "OK") {
+              this.$router.push('/profile');
             }
           })
           .catch((e) => {
             console.log(e);
           });
     },
+
     deleteBook() {
       BookDataService.delete(this.currentBook.id)
           .then((response) => {

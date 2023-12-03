@@ -22,7 +22,7 @@
           <p><strong>Pages:</strong> {{ currentBook.pages }}</p>
           <p><strong>Rating:</strong> {{ currentBook.rating }}</p>
           <p><strong>Reviews:</strong> {{ currentBook.reviews }}</p>
-          <p v-if="showAdminBoard"><strong>Status:</strong> {{ currentBook.published ? "Published" : "Pending" }}</p>
+          <p><strong>Status:</strong> {{ currentBook.published ? "Published" : "Pending" }}</p>
           <p><strong>Description:</strong> {{ currentBook.description }}</p>
         </v-col>
       </v-row>
@@ -31,30 +31,18 @@
 
       <v-row>
         <v-col cols="12">
-          <div v-if="showAdminBoard">
-            <v-btn v-if="currentBook.published" @click="updatePublished(false)" color="primary" small class="mr-2">
-              UnPublish
-            </v-btn>
-
-            <v-btn v-else @click="updatePublished(true)" color="danger" small class="mr-2">
-              Publish
-            </v-btn>
-
-            <v-btn color="danger" small class="mr-2" @click="deleteBook">
-              Delete
-            </v-btn>
-            <v-btn color="danger" small @click="updateBook">
-              Update
-            </v-btn>
-          </div>
-          <div v-if="currentUser">
-            <!--            <router-link :to="{ name: 'buybookpage', params: { id: currentBook.id } }">-->
-            <v-btn color="danger" small @click="checkower">
-              <!--              <v-btn color="danger" small>-->
-              Buy
-            </v-btn>
-            <!--            </router-link>-->
-          </div>
+          <v-btn v-if="currentBook.published" @click="updatePublished(false)" color="primary" small class="mr-2">
+            UnPublish
+          </v-btn>
+          <v-btn v-else @click="updatePublished(true)" color="danger" small class="mr-2">
+            Publish
+          </v-btn>
+          <v-btn color="danger" small class="mr-2" @click="deleteBook">
+            Delete
+          </v-btn>
+          <v-btn color="danger" small @click="updateBook">
+            Update
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -109,35 +97,18 @@ export default {
       BookDataService.update(this.currentBook.id, this.currentBook)
           .then((response) => {
             console.log(response.data);
-            this.$router.push({name: "books"});
+            this.$router.push({ name: "books" });
           })
           .catch((e) => {
             console.log(e);
           });
     },
-    checkower() {
-      var data = {
-        userid: this.currentUser.id,
-        bookid: this.currentBook.id,
-      };
-      BookDataService.checkowner(data)
-          .then((response) => {
-            console.log(response.data);
-            if (response.data === 0) {
-              this.$router.push({name: "buybookpage", params: {id: this.currentBook.id}});
-            } else {
-              alert("you already owned this book");
-            }
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    },
+
     deleteBook() {
       BookDataService.delete(this.currentBook.id)
           .then((response) => {
             console.log(response.data);
-            this.$router.push({name: "books"});
+            this.$router.push({ name: "books" });
           })
           .catch((e) => {
             console.log(e);
@@ -146,17 +117,6 @@ export default {
   },
   mounted() {
     this.getBook(this.$route.params.id);
-  },
-  computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
-    },
-    showAdminBoard() {
-      if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_ADMIN');
-      }
-      return false;
-    }
   },
 };
 </script>
