@@ -27,11 +27,6 @@
           </template>
         </v-data-table>
 
-        <v-card-actions v-if="books.length > 0">
-          <v-btn small color="danger" @click="removeAllBooks">
-            Remove All
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-col>
   </v-row>

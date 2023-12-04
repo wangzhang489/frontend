@@ -8,9 +8,18 @@ class BookDataService {
     getAll(params) {
         return http.get(`/books`, {params});
     }
-
+    getBooklist(params) {
+        return http.get(`/booklists`, {params});
+    }
+    getbyList(id) {
+        return http.get(`/booklists/${id}`, );
+    }
     get(id) {
         return http.get(`/books/${id}`);
+    }
+
+    getmy(params) {
+        return http.get(`/mybook`, {params,headers: authHeader()});
     }
 
     create(data) {
@@ -20,9 +29,11 @@ class BookDataService {
     buybook(data) {
         return http.post("/buybook", data, {headers: authHeader()});
     }
+
     checkowner(data) {
         return http.post("/checkowner", data, {headers: authHeader()});
     }
+
     update(id, data) {
         return http.put(`/books/${id}`, data, {headers: authHeader()});
     }

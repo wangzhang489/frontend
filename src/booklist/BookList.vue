@@ -1,134 +1,173 @@
 <template>
-  <div v-if="currentBook" class="book-details py-3">
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <v-img :src="currentBook.img" alt="Book Cover" contain></v-img>
-        </v-col>
-      </v-row>
+  <div class="container">
+    <div class="col-md-8">
+      <div class="input-group mb-3">
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Search by title"
+            v-model="searchTitle"
+            @keyup.enter="searchBooks"
+        />
+        <div class="input-group-append">
+          <button
+              class="btn btn-outline-secondary"
+              type="button"
+              @click="page = 1; retrieveBooksbyList();"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Book Grid Section -->
+    <v-col cols="12" sm="12">
+      <v-card class="mx-auto" tile>
+        <v-card-title>Books</v-card-title>
 
-      <v-row>
-        <v-col cols="12">
-          <h2>{{ currentBook.title }}</h2>
-          <p><strong>Author:</strong> {{ currentBook.author }}</p>
-          <p><strong>Format:</strong> {{ currentBook.bookformat }}</p>
-          <p><strong>ISBN:</strong> {{ currentBook.isbn }}</p>
-          <p>
-            <strong>Genre:</strong>
-            <v-chip v-for="(genre, index) in currentBook.genre.split(',')" :key="index" class="mr-2" outlined>
-              {{ genre.trim() }}
-            </v-chip>
-          </p>
-          <p><strong>Pages:</strong> {{ currentBook.pages }}</p>
-          <p><strong>Rating:</strong> {{ currentBook.rating }}</p>
-          <p><strong>Reviews:</strong> {{ currentBook.reviews }}</p>
-          <p><strong>Status:</strong> {{ currentBook.published ? "Published" : "Pending" }}</p>
-          <p><strong>Description:</strong> {{ currentBook.description }}</p>
-        </v-col>
-      </v-row>
+        <!-- Grid Section -->
+        <v-row>
+          <v-col v-for="book in books" :key="book.id" cols="12" md="6" lg="4">
+            <!-- Wrap v-img inside router-link -->
+            <router-link :to="{ name: 'book-details', params: { id: book.id } }">
+              <v-card class="mb-3" max-width="400" height="100%">
+                <v-responsive aspect-ratio="1.5">
+                  <v-img :src="book.img" contain></v-img>
+                </v-responsive>
+                <v-card-title class="text-h6">{{ book.title }}</v-card-title>
+                <b-button >View Details</b-button>
+              </v-card>
+            </router-link>
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-col>
+    <div class="col-md-12">
+      <b-pagination
+          v-model="page"
+          :total-rows="count"
+          :per-page="pageSize"
+          prev-text="Prev"
+          next-text="Next"
+          @change="handlePageChange"
+      ></b-pagination>
+    </div>
+    <!--    </v-row>-->
 
-      <v-divider class="my-5"></v-divider>
-
-      <v-row>
-        <v-col cols="12">
-          <v-btn v-if="currentBook.published" @click="updatePublished(false)" color="primary" small class="mr-2">
-            UnPublish
-          </v-btn>
-          <v-btn v-else @click="updatePublished(true)" color="danger" small class="mr-2">
-            Publish
-          </v-btn>
-          <v-btn color="danger" small class="mr-2" @click="deleteBook">
-            Delete
-          </v-btn>
-          <v-btn color="danger" small @click="updateBook">
-            Update
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
-
-  <div v-else>
-    <p>Please click on a Book...</p>
   </div>
 </template>
 
 <script>
-import BookDataService from "../services/BookDataService";
+// import UserService from '../services/user.service';
+import BookDataService from "@/services/BookDataService";
 
 export default {
-  name: "book",
+  name: 'Bbooklist-details',
   data() {
     return {
-      currentBook: null,
+      content: '',
+      books: [],
+      title: "",
+      searchTitle: "",
+      headers: [
+        {text: "ID", sortable: false, value: "id"},
+        {text: "Title", align: "start", sortable: false, value: "title"},
+        {text: "Author", value: "author", sortable: false},
+        {text: "Status", value: "status", sortable: false},
+        {text: "Actions", value: "actions", sortable: false},
+      ],
+      totalPages: 0,
+      currentPage: 1,
+      page: 1,
+      count: 0,
+      pageSize: 6,
     };
   },
   methods: {
-    getBook(id) {
-      BookDataService.get(id)
+    getRequestParams(searchTitle, page, pageSize) {
+      let params = {};
+
+      if (searchTitle) {
+        params["title"] = searchTitle;
+      }
+
+      if (page) {
+        params["page"] = page - 1;
+      }
+
+      if (pageSize) {
+        params["size"] = pageSize;
+      }
+
+      return params;
+    },
+    searchBooks() {
+      this.page = 1;
+      this.retrieveBooksbyList();
+    },
+    retrieveBooksbyList(id) {
+      const params = this.getRequestParams(
+          this.searchTitle,
+          this.page,
+          this.pageSize
+      );
+
+      BookDataService.getbyList(id,params)
           .then((response) => {
-            this.currentBook = response.data;
+            const { books, totalItems } = response.data;
+            this.books = books;
+            this.count = totalItems;
+
             console.log(response.data);
           })
           .catch((e) => {
             console.log(e);
           });
     },
+    handlePageSizeChange(event) {
+      this.pageSize = event.target.value;
+      this.page = 1;
+      this.retrieveBooksbyList();
+    },
+    handlePageChange(value) {
+      this.page = value;
+      this.retrieveBooksbyList();
+    },
+    refreshList() {
+      this.retrieveBooksbyList();
+    },
 
-    updatePublished(status) {
-      var data = {
-        id: this.currentBook.id,
-        title: this.currentBook.title,
-        description: this.currentBook.description,
-        published: status,
-      };
+    editBook(id) {
+      this.$router.push({ name: "book-details", params: { id: id } });
+    },
 
-      BookDataService.update(this.currentBook.id, data)
-          .then((response) => {
-            this.currentBook.published = status;
-            console.log(response.data);
+    deleteBook(id) {
+      BookDataService.delete(id)
+          .then(() => {
+            this.refreshList();
           })
           .catch((e) => {
             console.log(e);
           });
     },
-
-    updateBook() {
-      BookDataService.update(this.currentBook.id, this.currentBook)
-          .then((response) => {
-            console.log(response.data);
-            this.$router.push({ name: "books" });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+    onPageChange(page) {
+      this.retrieveBooksbyList(page);
     },
 
-    deleteBook() {
-      BookDataService.delete(this.currentBook.id)
-          .then((response) => {
-            console.log(response.data);
-            this.$router.push({ name: "books" });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    },
   },
   mounted() {
-    this.getBook(this.$route.params.id);
-  },
+    // UserService.getAdminBoard().then(
+    //     response => {
+    //       this.content = response.data;
+    //     },
+    //     error => {
+    //       this.content =
+    //           (error.response && error.response.data && error.response.data.message) ||
+    //           error.message ||
+    //           error.toString();
+    //     }
+    // );
+    this.retrieveBooksbyList(this.$route.params.id);
+  }
 };
 </script>
-
-<style scoped>
-.book-details {
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
-}
-
-.book-details v-img {
-  max-width: 100%;
-}
-</style>

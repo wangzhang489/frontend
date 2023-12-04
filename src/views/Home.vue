@@ -1,13 +1,5 @@
 <template>
   <div class="container">
-<!--    <v-row align="center" class="list px-3 mx-auto">-->
-      <!-- Search Section -->
-<!--      <v-col cols="12" md="8">-->
-<!--        <v-text-field v-model="title" label="Search by Title"></v-text-field>-->
-<!--      </v-col>-->
-<!--      <v-col cols="12" md="4">-->
-<!--        <v-btn small @click="page = 1; retrieveBooks();">Search</v-btn>-->
-<!--      </v-col>-->
       <div class="col-md-8">
         <div class="input-group mb-3">
           <input
@@ -43,6 +35,7 @@
                     <v-img :src="book.img" contain></v-img>
                   </v-responsive>
                   <v-card-title class="text-h6">{{ book.title }}</v-card-title>
+                  <b-button >View Details</b-button>
                 </v-card>
               </router-link>
             </v-col>
@@ -69,7 +62,7 @@ import UserService from '../services/user.service';
 import BookDataService from "@/services/BookDataService";
 
 export default {
-  name: 'Admin',
+  name: 'Home',
   data() {
     return {
       content: '',
@@ -144,16 +137,6 @@ export default {
     refreshList() {
       this.retrieveBooks();
     },
-    // searchTitle() {
-    //   BookDataService.findByTitle(this.title)
-    //       .then((response) => {
-    //         // this.books = response.data.map(this.getDisplayBook);
-    //         console.log(response.data);
-    //       })
-    //       .catch((e) => {
-    //         console.log(e);
-    //       });
-    // },
 
     editBook(id) {
       this.$router.push({ name: "book-details", params: { id: id } });
