@@ -1,19 +1,23 @@
 <template>
   <div class="container">
-<!--    <header class="jumbotron">-->
-<!--      <h3>-->
-<!--        <strong>{{ currentUser.username }}</strong> Profile-->
-<!--      </h3>-->
-<!--    </header>-->
-<!--    <p>-->
-<!--      <strong>Token:</strong>-->
-<!--      {{ currentUser.accessToken.substring(0, 20) }} ...-->
-<!--      {{ currentUser.accessToken.substr(currentUser.accessToken.length - 20) }}-->
-<!--    </p>-->
-<!--    <p>-->
-<!--      <strong>Id:</strong>-->
-<!--      {{ currentUser.id }}-->
-<!--    </p>-->
+    <!--    <header class="jumbotron">-->
+    <!--      <h3>-->
+    <!--        <strong>{{ currentUser.username }}</strong> Profile-->
+    <!--      </h3>-->
+    <!--    </header>-->
+    <!--    <p>-->
+    <!--      <strong>Token:</strong>-->
+    <!--      {{ currentUser.accessToken.substring(0, 20) }} ...-->
+    <!--      {{ currentUser.accessToken.substr(currentUser.accessToken.length - 20) }}-->
+    <!--    </p>-->
+    <!--    <p>-->
+    <!--      <strong>Id:</strong>-->
+    <!--      {{ currentUser.id }}-->
+    <!--    </p>-->
+    <p>
+      <strong>Username:</strong>
+      {{ currentUser.username }}
+    </p>
     <p>
       <strong>Email:</strong>
       {{ currentUser.email }}
@@ -23,14 +27,33 @@
       <li v-for="(role,index) in currentUser.roles" :key="index">{{ role }}</li>
     </ul>
     <v-row align="center" class="list px-3 mx-auto">
-      <!-- Search Section -->
-      <v-col cols="12" md="8">
-        <v-text-field v-model="title" label="Search by Title"></v-text-field>
-      </v-col>
-      <v-col cols="12" md="4">
-        <v-btn small @click="searchTitle">Search</v-btn>
-      </v-col>
-
+<!--      &lt;!&ndash; Search Section &ndash;&gt;-->
+<!--      <v-col cols="12" md="8">-->
+<!--        <v-text-field v-model="title" label="Search by Title"></v-text-field>-->
+<!--      </v-col>-->
+<!--      <v-col cols="12" md="4">-->
+<!--        <v-btn small @click="searchTitle">Search</v-btn>-->
+<!--      </v-col>-->
+      <div class="col-md-8">
+        <div class="input-group mb-3">
+          <input
+              type="text"
+              class="form-control"
+              placeholder="Search by title"
+              v-model="searchTitle"
+              @keyup.enter="searchBooks"
+          />
+          <div class="input-group-append">
+            <button
+                class="btn btn-outline-secondary"
+                type="button"
+                @click="page = 1; retrieveBooks();"
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
       <!-- Book Grid Section -->
       <v-col cols="12" sm="12">
         <v-card class="mx-auto" tile>
@@ -53,54 +76,42 @@
         </v-card>
       </v-col>
     </v-row>
-
-<!--    <v-row align="center" class="list px-3 mx-auto">-->
-<!--      <v-col cols="12" md="8">-->
-<!--        <v-text-field v-model="title" label="Search by Title"></v-text-field>-->
-<!--      </v-col>-->
-
-<!--      <v-col cols="12" md="4">-->
-<!--        <v-btn small @click="searchTitle">-->
-<!--          Search-->
-<!--        </v-btn>-->
-<!--      </v-col>-->
-
-<!--      <v-col cols="12" sm="12">-->
-<!--        <v-card class="mx-auto" tile>-->
-<!--          <v-card-title>Books</v-card-title>-->
-
-<!--          <v-data-table-->
-<!--              :headers="headers"-->
-<!--              :items="books"-->
-<!--              disable-pagination-->
-<!--              :hide-default-footer="true"-->
-<!--          >-->
-<!--            <template v-slot:[`item.actions`]="{ item }">-->
-<!--              <v-icon small class="mr-2" @click="editBook(item.id)">mdi-pencil</v-icon>-->
-<!--              <v-icon small @click="deleteBook(item.id)">mdi-delete</v-icon>-->
-<!--            </template>-->
-<!--          </v-data-table>-->
-<!--        </v-card>-->
-<!--      </v-col>-->
-<!--    </v-row>-->
+    <div class="col-md-12">
+      <b-pagination
+          v-model="page"
+          :total-rows="count"
+          :per-page="pageSize"
+          prev-text="Prev"
+          next-text="Next"
+          @change="handlePageChange"
+      ></b-pagination>
+    </div>
   </div>
 </template>
 
 <script>
-import UserService from '../services/user.service';
+// import UserService from '../services/user.service';
 import BookDataService from "@/services/BookDataService";
+
 export default {
   name: 'Profile',
   data() {
     return {
       books: [],
       title: "",
+      content: '',
+      totalPages: 0,
+      currentPage: 1,
+      page: 0,
+      count: 0,
+      pageSize: 4,
+      searchTitle: "",
       headers: [
-        { text: "ID", sortable: false, value: "id" },
-        { text: "Title", align: "start", sortable: false, value: "title" },
-        { text: "Author", value: "author", sortable: false },
-        { text: "Status", value: "status", sortable: false },
-        { text: "Actions", value: "actions", sortable: false },
+        {text: "ID", sortable: false, value: "id"},
+        {text: "Title", align: "start", sortable: false, value: "title"},
+        {text: "Author", value: "author", sortable: false},
+        {text: "Status", value: "status", sortable: false},
+        {text: "Actions", value: "actions", sortable: false},
       ],
     };
   },
@@ -113,14 +124,43 @@ export default {
     if (!this.currentUser) {
       this.$router.push('/login');
     }
-    this.retrieveMyooks();
+    this.retrieveBooks();
   },
   methods: {
-    retrieveMyooks() {
-      UserService.getUserBooks()
+    getRequestParams(searchTitle, page, pageSize) {
+      let params = {};
+
+      if (searchTitle) {
+        params["title"] = searchTitle;
+      }
+
+      if (page) {
+        params["page"] = page - 1;
+      }
+
+      if (pageSize) {
+        params["size"] = pageSize;
+      }
+
+      return params;
+    },
+    searchBooks() {
+      this.page = 1;
+      this.retrieveBooks();
+    },
+    retrieveBooks() {
+      const params = this.getRequestParams(
+          this.searchTitle,
+          this.page,
+          this.pageSize
+      );
+
+      BookDataService.getmy(params)
           .then((response) => {
-            // this.books = response.data.map(this.getDisplayBook);
-            this.books = response.data.books;
+            const {books, totalItems} = response.data;
+            this.books = books;
+            this.count = totalItems;
+
             console.log(response.data);
           })
           .catch((e) => {
@@ -131,17 +171,9 @@ export default {
     refreshList() {
       this.retrieveBooks();
     },
-
-
-    searchTitle() {
-      BookDataService.findByTitle(this.title)
-          .then((response) => {
-            // this.books = response.data.map(this.getDisplayBook);
-            console.log(response.data);
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+    handlePageChange(value) {
+      this.page = value;
+      this.retrieveBooks();
     },
 
     editBook(id) {
