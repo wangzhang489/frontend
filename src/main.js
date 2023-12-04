@@ -12,7 +12,6 @@ import VeeValidate from 'vee-validate';
 import Vuex from 'vuex';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-console.log(firebase_key)
 import {
   faHome,
   faUser,

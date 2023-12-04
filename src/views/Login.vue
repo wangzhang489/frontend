@@ -2,40 +2,42 @@
   <div class="col-md-12">
     <div class="card card-container">
       <img
-        id="profile-img"
-        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-        class="profile-img-card"
+          id="profile-img"
+          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+          class="profile-img-card"
       />
       <form name="form" @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="username">Username</label>
           <input
-            v-model="user.username"
-            v-validate="'required'"
-            type="text"
-            class="form-control"
-            name="username"
+              v-model="user.username"
+              v-validate="'required'"
+              type="text"
+              class="form-control"
+              name="username"
           />
           <div
-            v-if="errors.has('username')"
-            class="alert alert-danger"
-            role="alert"
-          >Username is required!</div>
+              v-if="errors.has('username')"
+              class="alert alert-danger"
+              role="alert"
+          >Username is required!
+          </div>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
           <input
-            v-model="user.password"
-            v-validate="'required'"
-            type="password"
-            class="form-control"
-            name="password"
+              v-model="user.password"
+              v-validate="'required'"
+              type="password"
+              class="form-control"
+              name="password"
           />
           <div
-            v-if="errors.has('password')"
-            class="alert alert-danger"
-            role="alert"
-          >Password is required!</div>
+              v-if="errors.has('password')"
+              class="alert alert-danger"
+              role="alert"
+          >Password is required!
+          </div>
         </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block" :disabled="loading">
@@ -44,14 +46,15 @@
           </button>
         </div>
         <div class="form-group">
-          <div v-if="message" class="alert alert-danger" role="alert">{{message}}</div>
+          <div v-if="message" class="alert alert-danger" role="alert">{{ message }}</div>
         </div>
         <b-form-group class="text-center">
           <p>
             Don't have an account ? You can
-            <router-link to="/signup">create one by Github </router-link>
+            <router-link to="/signup">create one by Github</router-link>
           </p>
-          <b-button class="social-button" @click="socialGithubLogin"
+          <!--          <b-button class="social-button" @click="socialGithubLogin"-->
+          <b-button class="social-button"
           ><img src="../assets/github_logo.png"
                 width="20"/></b-button>
         </b-form-group>
@@ -62,6 +65,7 @@
 
 <script>
 import User from '../models/user';
+
 export default {
   name: 'Login',
   data() {
@@ -95,16 +99,16 @@ export default {
 
         if (this.user.username && this.user.password) {
           this.$store.dispatch('auth/login', this.user).then(
-            () => {
-              this.$router.push('/profile');
-            },
-            error => {
-              this.loading = false;
-              this.message =
-                (error.response && error.response.data && error.response.data.message) ||
-                error.message ||
-                error.toString();
-            }
+              () => {
+                this.$router.push('/profile');
+              },
+              error => {
+                this.loading = false;
+                this.message =
+                    (error.response && error.response.data && error.response.data.message) ||
+                    error.message ||
+                    error.toString();
+              }
           );
         }
       });
