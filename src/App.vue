@@ -7,15 +7,24 @@
         <li class="nav-item">
           <router-link to="/home" class="nav-link">
             <font-awesome-icon icon="home"/>
-            Home
+            The BOOK STORE
           </router-link>
         </li>
-        <!--        <li class="nav-item">-->
-        <!--          <router-link to="/tutorials" class="nav-link">-->
-        <!--            Tutorials-->
-        <!--          </router-link>-->
-        <!--        </li>-->
-
+        <li class="nav-item">
+          <router-link to="/booklist" class="nav-link">
+            BookList
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/about" class="nav-link">
+            About
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/privacy" class="nav-link">
+            Privacy
+          </router-link>
+        </li>
         <!--        <li class="nav-item">-->
         <!--          <router-link to="/books" class="nav-link">-->
         <!--            Books-->
@@ -29,9 +38,6 @@
             Add
           </router-link>
         </li>
-<!--        <li class="nav-item">-->
-<!--          <router-link v-if="currentUser" to="/user" class="nav-link">User</router-link>-->
-<!--        </li>-->
       </div>
 
       <div v-if="!currentUser" class="navbar-nav ml-auto">
@@ -65,7 +71,7 @@
       </div>
 
     </nav>
-    <template >
+    <template>
       <div z-index="-1">
         <b-button v-b-toggle.sidebar-no-header>Toggle Sidebar</b-button>
         <b-sidebar id="sidebar-no-header" aria-labelledby="sidebar-no-header-title" no-header shadow>
@@ -93,25 +99,6 @@
       <router-view/>
     </div>
   </div>
-  <!--  <v-app>-->
-  <!--    <v-app-bar app dark>-->
-  <!--      <div class="d-flex align-center mr-2">-->
-  <!--        bezKoder-->
-  <!--      </div>-->
-
-  <!--      <v-btn to="/tutorials" text>-->
-  <!--        Tutorials-->
-  <!--      </v-btn>-->
-
-  <!--      <v-btn to="/add" text>-->
-  <!--        Add-->
-  <!--      </v-btn>-->
-  <!--    </v-app-bar>-->
-
-  <!--    <v-main>-->
-  <!--      <router-view />-->
-  <!--    </v-main>-->
-  <!--  </v-app>-->
 </template>
 
 <script>
