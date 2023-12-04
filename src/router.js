@@ -3,6 +3,8 @@ import Router from "vue-router";
 import Home from './views/Home.vue';
 import Login from './views/Login.vue';
 import Register from './views/Register.vue';
+import About from "./views/About.vue";
+import Privacy from "@/views/Privacy.vue";
 
 Vue.use(Router);
 
@@ -30,6 +32,16 @@ export default new Router({
             component: () => import("./book/Book")
         },
         {
+            path: "/booklist",
+            name: "booklist",
+            component: () => import("./booklist/BookList_List.vue")
+        },
+        {
+            path: "/booklist/:id",
+            name: "booklist-details",
+            component: () => import("./booklist/BookList.vue")
+        },
+        {
             path: "/buybooks/:id",
             name: "buybookpage",
             component: () => import("./views/Buy.vue")
@@ -41,6 +53,14 @@ export default new Router({
         {
             path: '/register',
             component: Register
+        },
+        {
+            path: '/about',
+            component: About
+        },
+        {
+            path: '/privacy',
+            component: Privacy
         },
         {
             path: '/profile',
