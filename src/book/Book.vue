@@ -22,6 +22,7 @@
           <p><strong>Pages:</strong> {{ currentBook.pages }}</p>
           <p><strong>Rating:</strong> {{ currentBook.rating }}</p>
           <p><strong>Reviews:</strong> {{ currentBook.reviews }}</p>
+          <p><strong>Price:</strong> {{ currentBook.price }}</p>
           <p v-if="showAdminBoard"><strong>Status:</strong> {{ currentBook.published ? "Published" : "Pending" }}</p>
           <p><strong>Description:</strong> {{ currentBook.description }}</p>
         </v-col>

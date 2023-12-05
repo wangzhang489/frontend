@@ -12,15 +12,13 @@
               {{ genre.trim() }}
             </v-chip>
           </p>
-          <p><strong>Pages:</strong> {{ currentBook.pages }}</p>
-          <p><strong>Rating:</strong> {{ currentBook.rating }}</p>
-          <p><strong>Reviews:</strong> {{ currentBook.reviews }}</p>
+          <p><strong>Total Price:</strong> {{ currentBook.price }}</p>
           <p v-if="showAdminBoard"><strong>Status:</strong> {{ currentBook.published ? "Published" : "Pending" }}</p>
         </v-col>
       </v-row>
 
       <v-divider class="my-5"></v-divider>
-
+      <p><strong>The Total Priceis :</strong> {{ currentBook.price }}.00.  <strong>Do you want to check out?</strong></p>
       <v-row>
         <v-col cols="12">
           <div v-if="currentUser">
